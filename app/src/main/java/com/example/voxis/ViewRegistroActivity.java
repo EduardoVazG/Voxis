@@ -1,6 +1,7 @@
 package com.example.voxis;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -33,6 +34,7 @@ public class ViewRegistroActivity extends AppCompatActivity {
     }
 
     public void Registro(View view) {
+        Intent intent = new Intent(ViewRegistroActivity.this, MainActivity.class);
         AdminBD adminBDEventos = new AdminBD(this);
         SQLiteDatabase bDatos = adminBDEventos.getWritableDatabase();
 
@@ -62,6 +64,7 @@ public class ViewRegistroActivity extends AppCompatActivity {
             } else {
                 // Registro exitoso
                 Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
             }
         } else {
             // Mostrar mensaje si algún campo está vacío

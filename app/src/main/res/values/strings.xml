@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Voxis</string>
+    <string name="agregar_contacto">Agregar contacto</string>
+
 </resources>

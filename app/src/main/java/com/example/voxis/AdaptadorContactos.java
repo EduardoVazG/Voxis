@@ -32,6 +32,7 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         Contactos contactos = contactostList.get(position);
         holder.nombre.setText(contactos.getName());
         holder.hora_llamada.setText(contactos.getCallTime());
+        holder.numero_contacto.setText(contactos.getNumero_contacto());
         holder.perfil_icono.setImageResource(contactos.getProfileImage());
     }
 
@@ -45,11 +46,14 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         TextView nombre;
         TextView hora_llamada;
 
+        TextView numero_contacto;
+
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             perfil_icono = itemView.findViewById(R.id.perfil_icono);
             nombre = itemView.findViewById(R.id.nombre);
             hora_llamada = itemView.findViewById(R.id.hora_llamada);
+            numero_contacto = itemView.findViewById(R.id.numero);
         }
     }
 }
