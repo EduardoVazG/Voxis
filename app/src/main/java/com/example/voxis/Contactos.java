@@ -3,7 +3,6 @@ package com.example.voxis;
 public class Contactos {
     private String nombre;
     private String hora_llamada;
-
     private String numero_contacto;
     private int perfil_icono;
 
@@ -21,10 +20,10 @@ public class Contactos {
     public String getCallTime() {
         return hora_llamada;
     }
+
     public String getNumero_contacto() {
         return numero_contacto;
     }
-
 
     public int getProfileImage() {
         return perfil_icono;

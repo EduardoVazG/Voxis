@@ -45,7 +45,6 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         ImageView perfil_icono;
         TextView nombre;
         TextView hora_llamada;
-
         TextView numero_contacto;
 
         public ContactViewHolder(@NonNull View itemView) {
