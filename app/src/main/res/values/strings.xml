@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Voxis</string>
     <string name="agregar_contacto">Agregar contacto</string>
-
+    <string name="acerdaDe">
+        Esta aplicacion fue desarrollada con la intecion de ayudar al usuario a tener una mejor privacidad con sus contactos
+    </string>
 </resources>
