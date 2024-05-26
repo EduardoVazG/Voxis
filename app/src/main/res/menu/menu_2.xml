@@ -2,17 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-
     <item
-        android:id="@+id/agregarContacto"
-        android:icon="@drawable/agregar"
+        android:id="@+id/btnRegresarMenu"
+        android:icon="@drawable/regresar"
         android:title="Agregar contacto"
         app:showAsAction="always"
-        />
-
-    <item
-        android:id="@+id/acerdaDe"
-        android:title="Acerca de"
-        android:icon="@drawable/opciones"
         />
 </menu>
