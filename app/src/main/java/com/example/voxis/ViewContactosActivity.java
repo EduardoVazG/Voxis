@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.Menu;
@@ -45,6 +46,7 @@ public class ViewContactosActivity extends AppCompatActivity {
         } else {
             // Si ya se tiene el permiso, leer contactos
             obtenerContactos();
+            obtenerContactosBD();
         }
     }
 
@@ -72,6 +74,7 @@ public class ViewContactosActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permiso concedido
                 obtenerContactos();
+                obtenerContactosBD();
             } else {
                 // Permiso denegado
                 Toast.makeText(this, "Permiso denegado para leer contactos", Toast.LENGTH_SHORT).show();
@@ -101,7 +104,46 @@ public class ViewContactosActivity extends AppCompatActivity {
         }
 
         // Configurar el adaptador con los datos de contactos
-        contactsAdapter = new AdaptadorContactos(contactosList);
-        recyclerView.setAdapter(contactsAdapter);
+        if (contactsAdapter == null) {
+            contactsAdapter = new AdaptadorContactos(contactosList);
+            recyclerView.setAdapter(contactsAdapter);
+        } else {
+            contactsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void obtenerContactosBD() {
+        AdminBD adminBD = new AdminBD(this);
+        SQLiteDatabase db = adminBD.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery("SELECT nombre, telefono, correo FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String nombre = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO2));
+                    String telefono = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO3));
+                    String correo = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO4));
+                    String hora = "12:00 PM"; // Aquí podrías poner la hora real si la tienes, de lo contrario, usa un valor por defecto
+
+                    contactosList.add(new Contactos(nombre, hora, R.drawable.perfil, telefono));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al obtener contactos desde la base de datos", Toast.LENGTH_SHORT).show();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        // Configurar el adaptador con los datos de contactos
+        if (contactsAdapter == null) {
+            contactsAdapter = new AdaptadorContactos(contactosList);
+            recyclerView.setAdapter(contactsAdapter);
+        } else {
+            contactsAdapter.notifyDataSetChanged();
+        }
     }
 }
