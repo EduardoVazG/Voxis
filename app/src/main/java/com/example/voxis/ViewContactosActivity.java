@@ -2,6 +2,7 @@ package com.example.voxis;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -29,6 +30,7 @@ public class ViewContactosActivity extends AppCompatActivity {
     private List<Contactos> contactosList;
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    private static final int REQUEST_CODE_EDIT_CONTACT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,7 @@ public class ViewContactosActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Añade esta línea
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permiso concedido
@@ -92,29 +94,46 @@ public class ViewContactosActivity extends AppCompatActivity {
                 null, null, null, null);
 
         if (cursor != null) {
-            int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-            int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            SQLiteDatabase db = null;
+            try {
+                AdminBD adminBD = new AdminBD(this);
+                db = adminBD.getWritableDatabase();
+                db.beginTransaction();
 
-            while (cursor.moveToNext()) {
-                if (nameIndex != -1 && numberIndex != -1) {
-                    String nombre = cursor.getString(nameIndex);
-                    String numero = cursor.getString(numberIndex);
-                    String hora = "12:00 PM"; // Aquí podrías poner la hora real si la tienes, de lo contrario, usa un valor por defecto
+                int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                int emailIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS);
 
-                    contactosList.add(new Contactos(nombre, hora, R.drawable.perfil, numero));
+                while (cursor.moveToNext()) {
+                    if (nameIndex != -1 && numberIndex != -1) {
+                        String nombre = cursor.getString(nameIndex);
+                        String numero = cursor.getString(numberIndex);
+                        String correo = emailIndex != -1 ? cursor.getString(emailIndex) : null;
+
+                        // Agregar el contacto a la base de datos
+                        ContentValues values = new ContentValues();
+                        values.put(AdminBD.CONTACTOS_CAMPO2, nombre);
+                        values.put(AdminBD.CONTACTOS_CAMPO3, numero);
+                        values.put(AdminBD.CONTACTOS_CAMPO4, correo); // Correo obtenido
+                        values.put(AdminBD.CONTACTOS_CAMPO5, 0); // Categoría "ninguno"
+
+                        db.insertOrThrow(AdminBD.NOMBRE_TABLA_CONTACTOS, null, values);
+                    }
                 }
-            }
-            cursor.close();
-        }
 
-        // Configurar el adaptador con los datos de contactos
-        if (contactsAdapter == null) {
-            contactsAdapter = new AdaptadorContactos(contactosList);
-            recyclerView.setAdapter(contactsAdapter);
-        } else {
-            contactsAdapter.notifyDataSetChanged();
+                db.setTransactionSuccessful();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null) {
+                    db.endTransaction();
+                    db.close();
+                }
+                cursor.close();
+            }
         }
     }
+
 
     private void obtenerContactosBD() {
         AdminBD adminBD = new AdminBD(this);
@@ -122,15 +141,20 @@ public class ViewContactosActivity extends AppCompatActivity {
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery("SELECT nombre, telefono, correo FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS, null);
+            cursor = db.rawQuery("SELECT contactos.id, contactos.nombre, contactos.telefono, contactos.correo, categorias.nombre AS categoria FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS +
+                    " INNER JOIN " + AdminBD.NOMBRE_TABLA_CATEGORIAS + " ON " + AdminBD.NOMBRE_TABLA_CONTACTOS + "." + AdminBD.CONTACTOS_CAMPO5 + " = " + AdminBD.NOMBRE_TABLA_CATEGORIAS + "." + AdminBD.CATEGORIAS_CAMPO1, null);
+
             if (cursor.moveToFirst()) {
                 do {
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO1));
                     String nombre = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO2));
                     String telefono = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO3));
                     String correo = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO4));
-                    String hora = "12:00 PM"; // Aquí podrías poner la hora real si la tienes, de lo contrario, usa un valor por defecto
+                    String categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
 
-                    contactosList.add(new Contactos(nombre, hora, R.drawable.perfil, telefono));
+                    String hora = "12:00 PM"; // Hora por defecto
+
+                    contactosList.add(new Contactos(id, nombre, hora, R.drawable.perfil, telefono, correo,categoria));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -144,10 +168,19 @@ public class ViewContactosActivity extends AppCompatActivity {
 
         // Configurar el adaptador con los datos de contactos
         if (contactsAdapter == null) {
-            contactsAdapter = new AdaptadorContactos(contactosList);
+            contactsAdapter = new AdaptadorContactos(contactosList, this);
             recyclerView.setAdapter(contactsAdapter);
         } else {
             contactsAdapter.notifyDataSetChanged();
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Clear the list and reload contacts from the database to reflect any updates
+        contactosList.clear();
+        obtenerContactosBD();
     }
 }

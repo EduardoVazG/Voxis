@@ -6,16 +6,15 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp"
-
-    >
+    card_view:cardElevation="4dp">
 
     <RelativeLayout
+        android:id="@+id/relative_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="@color/white"
-        >
+
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/perfil_icono"
@@ -57,5 +56,4 @@
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray" />
     </RelativeLayout>
-
 </androidx.cardview.widget.CardView>

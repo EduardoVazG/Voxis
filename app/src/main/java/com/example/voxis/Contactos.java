@@ -1,31 +1,51 @@
 package com.example.voxis;
 
 public class Contactos {
-    private String nombre;
-    private String hora_llamada;
+    private int id;
+    private String name;
+    private String callTime;
+    private int profileImage;
     private String numero_contacto;
-    private int perfil_icono;
+    private String correo;
+    private String categoria;
 
-    public Contactos(String nombre, String hora_llamada, int perfil_icono, String numero_contacto) {
-        this.nombre = nombre;
-        this.hora_llamada = hora_llamada;
-        this.perfil_icono = perfil_icono;
+    // Constructor
+    public Contactos(int id, String name, String callTime, int profileImage, String numero_contacto, String correo, String categoria) {
+        this.id = id;
+        this.name = name;
+        this.callTime = callTime;
+        this.profileImage = profileImage;
         this.numero_contacto = numero_contacto;
+        this.correo = correo;
+        this.categoria = categoria;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
     }
 
     public String getName() {
-        return nombre;
+        return name;
     }
 
     public String getCallTime() {
-        return hora_llamada;
+        return callTime;
+    }
+
+    public int getProfileImage() {
+        return profileImage;
     }
 
     public String getNumero_contacto() {
         return numero_contacto;
     }
 
-    public int getProfileImage() {
-        return perfil_icono;
+    public String getCorreo() {
+        return correo;
+    }
+
+    public String getCategoria() {
+        return categoria;
     }
 }

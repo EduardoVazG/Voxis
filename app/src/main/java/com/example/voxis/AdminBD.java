@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 public class AdminBD extends SQLiteOpenHelper {
 
     public static final String NOMBRE_BD = "bdVoxis";
-    public static final int VERSION_BD = 2;
+    public static final int VERSION_BD = 3;
 
     // Tabla registro
     public static final String NOMBRE_TABLA = "registro";
@@ -58,6 +58,7 @@ public class AdminBD extends SQLiteOpenHelper {
 
         // Insertar categorías iniciales
         String queryInsertarCategorias = "INSERT INTO " + NOMBRE_TABLA_CATEGORIAS + " (" + CATEGORIAS_CAMPO2 + ") VALUES " +
+                "('Ninguno')," +
                 "('Amigos')," +
                 "('Familia')," +
                 "('Trabajo')";

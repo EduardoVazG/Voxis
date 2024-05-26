@@ -1,9 +1,12 @@
 package com.example.voxis;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,10 +17,12 @@ import java.util.List;
 
 public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.ContactViewHolder> {
 
-    private List<Contactos> contactostList;
+    private List<Contactos> contactosList;
+    private Context context;
 
-    public AdaptadorContactos(List<Contactos> contactList) {
-        this.contactostList = contactList != null ? contactList : new ArrayList<>();
+    public AdaptadorContactos(List<Contactos> contactList, Context context) {
+        this.contactosList = contactList != null ? contactList : new ArrayList<>();
+        this.context = context;
     }
 
     @NonNull
@@ -27,18 +32,32 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         return new ContactViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Contactos contactos = contactostList.get(position);
+        Contactos contactos = contactosList.get(position);
         holder.nombre.setText(contactos.getName());
         holder.hora_llamada.setText(contactos.getCallTime());
         holder.numero_contacto.setText(contactos.getNumero_contacto());
         holder.perfil_icono.setImageResource(contactos.getProfileImage());
+
+        holder.relativeLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(context, MostrarContactoActivity.class);
+            intent.putExtra("id", contactos.getId());
+            intent.putExtra("nombre", contactos.getName());
+            intent.putExtra("numero", contactos.getNumero_contacto());
+            intent.putExtra("correo", contactos.getCorreo());
+            intent.putExtra("categoria", contactos.getCategoria()); // Añadido
+            intent.putExtra("perfilResId", contactos.getProfileImage());
+            context.startActivity(intent);
+        });
     }
+
+
 
     @Override
     public int getItemCount() {
-        return contactostList.size();
+        return contactosList.size();
     }
 
     static class ContactViewHolder extends RecyclerView.ViewHolder {
@@ -46,6 +65,7 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         TextView nombre;
         TextView hora_llamada;
         TextView numero_contacto;
+        RelativeLayout relativeLayout;
 
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -53,6 +73,14 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
             nombre = itemView.findViewById(R.id.nombre);
             hora_llamada = itemView.findViewById(R.id.hora_llamada);
             numero_contacto = itemView.findViewById(R.id.numero);
+            relativeLayout = itemView.findViewById(R.id.relative_layout);
         }
     }
+
+    public void updateContactList(List<Contactos> newContactList) {
+        contactosList.clear();
+        contactosList.addAll(newContactList);
+        notifyDataSetChanged();
+    }
 }
+
