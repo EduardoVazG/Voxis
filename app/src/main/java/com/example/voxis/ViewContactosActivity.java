@@ -130,7 +130,6 @@ public class ViewContactosActivity extends AppCompatActivity {
 
 
 
-
     private void obtenerContactosBD() {
         AdminBD adminBD = new AdminBD(this);
         SQLiteDatabase db = adminBD.getReadableDatabase();
