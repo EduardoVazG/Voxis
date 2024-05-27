@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Voxis"
         tools:targetApi="31">
         <activity
+            android:name=".ViewCategoriasActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditarContactoActivity"
             android:exported="false" />
         <activity

@@ -4,6 +4,20 @@
     >
 
     <item
+        android:id="@+id/logo"
+        android:icon="@drawable/logo"
+        android:title="@null"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/bluetooth"
+        android:icon="@drawable/bluetooth"
+        android:title="@null"
+        app:showAsAction="always"
+        />
+
+    <item
         android:id="@+id/agregarContacto"
         android:icon="@drawable/agregar"
         android:title="Agregar contacto"
