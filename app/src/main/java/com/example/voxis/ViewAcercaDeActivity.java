@@ -21,7 +21,7 @@ public class ViewAcercaDeActivity extends AppCompatActivity {
         viewFlipper = findViewById(R.id.viewFlipper);
 
         // Configura la duración del intervalo para cada desarrollador
-        viewFlipper.setFlipInterval(3000); // 3 segundos
+        viewFlipper.setFlipInterval(1000); // 1 segundos
         viewFlipper.startFlipping();
     }
 

@@ -37,7 +37,6 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         Contactos contactos = contactosList.get(position);
         holder.nombre.setText(contactos.getName());
-        holder.hora_llamada.setText(contactos.getCallTime());
         holder.numero_contacto.setText(contactos.getNumero_contacto());
         holder.perfil_icono.setImageResource(contactos.getProfileImage());
 
@@ -63,7 +62,6 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
     static class ContactViewHolder extends RecyclerView.ViewHolder {
         ImageView perfil_icono;
         TextView nombre;
-        TextView hora_llamada;
         TextView numero_contacto;
         RelativeLayout relativeLayout;
 
@@ -71,7 +69,6 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
             super(itemView);
             perfil_icono = itemView.findViewById(R.id.perfil_icono);
             nombre = itemView.findViewById(R.id.nombre);
-            hora_llamada = itemView.findViewById(R.id.hora_llamada);
             numero_contacto = itemView.findViewById(R.id.numero);
             relativeLayout = itemView.findViewById(R.id.relative_layout);
         }

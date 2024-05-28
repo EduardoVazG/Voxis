@@ -8,34 +8,48 @@
     android:layout_height="match_parent"
     tools:context=".EditarContactoActivity"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white"
+    >
 
     <EditText
         android:layout_marginTop="35dp"
         android:id="@+id/edit_nombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre" />
+        android:hint="Nombre"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        />
 
     <EditText
         android:id="@+id/edit_numero"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Número"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        />
 
     <EditText
         android:id="@+id/edit_correo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Correo"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        />
 
     <Spinner
         android:id="@+id/spinner_categoria"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        />
 
     <Button
         android:id="@+id/btn_guardar_contacto"
@@ -43,8 +57,12 @@
         android:layout_height="wrap_content"
         android:text="Guardar"
         android:onClick="ActualizarContac"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/black"
+
+        />
 
 
 </LinearLayout>

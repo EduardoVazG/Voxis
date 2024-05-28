@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EditarContactoActivity extends AppCompatActivity {
+public class    EditarContactoActivity extends AppCompatActivity {
 
     private EditText nombreEdit;
     private EditText numeroEdit;
