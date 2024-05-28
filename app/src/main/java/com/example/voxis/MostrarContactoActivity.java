@@ -79,4 +79,9 @@ public class MostrarContactoActivity extends AppCompatActivity {
             perfilView.setImageResource(perfilResId);
         }
     }
+
+    public void btn_regresar(View view) {
+        Intent intent = new Intent(MostrarContactoActivity.this, ViewContactosActivity.class);
+        startActivity(intent);
+    }
 }

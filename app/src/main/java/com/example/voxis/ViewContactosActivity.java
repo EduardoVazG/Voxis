@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,9 +39,12 @@ public class ViewContactosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_contactos);
 
+
+
+
+
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         contactosList = new ArrayList<>();
 
         // Pedir permisos
@@ -51,6 +56,9 @@ public class ViewContactosActivity extends AppCompatActivity {
             obtenerContactosBD();
         }
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
