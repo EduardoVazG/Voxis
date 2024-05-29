@@ -40,26 +40,17 @@ public class ViewContactosActivity extends AppCompatActivity {
         setContentView(R.layout.view_contactos);
 
 
-
-
-
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         contactosList = new ArrayList<>();
 
-        // Pedir permisos
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
         } else {
-            // Si ya se tiene el permiso, leer contactos
             obtenerContactos();
             obtenerContactosBD();
         }
     }
-
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -86,7 +77,7 @@ public class ViewContactosActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido
+                // Permiso concedido, leer contactos
                 obtenerContactos();
                 obtenerContactosBD();
             } else {
@@ -110,23 +101,19 @@ public class ViewContactosActivity extends AppCompatActivity {
 
                 int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
                 int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                int emailIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS);
 
                 while (cursor.moveToNext()) {
-                    if (nameIndex != -1 && numberIndex != -1) {
-                        String nombre = cursor.getString(nameIndex);
-                        String numero = cursor.getString(numberIndex);
-                        String correo = emailIndex != -1 ? cursor.getString(emailIndex) : null;
+                    String nombre = cursor.getString(nameIndex);
+                    String numero = cursor.getString(numberIndex);
+                    String correo = "Ninguno"; // Asignar valor predeterminado
 
-                        // Agregar el contacto a la base de datos
-                        ContentValues values = new ContentValues();
-                        values.put(AdminBD.CONTACTOS_CAMPO2, nombre);
-                        values.put(AdminBD.CONTACTOS_CAMPO3, numero);
-                        values.put(AdminBD.CONTACTOS_CAMPO4, correo); // Correo obtenido
-                        values.put(AdminBD.CONTACTOS_CAMPO5, 0); // Categoría "ninguno"
+                    ContentValues values = new ContentValues();
+                    values.put(AdminBD.CONTACTOS_CAMPO2, nombre);
+                    values.put(AdminBD.CONTACTOS_CAMPO3, numero);
+                    values.put(AdminBD.CONTACTOS_CAMPO4, correo); // Correo predeterminado
+                    values.put(AdminBD.CONTACTOS_CAMPO5, 0); // Categoría "ninguno"
 
-                        db.insertOrThrow(AdminBD.NOMBRE_TABLA_CONTACTOS, null, values);
-                    }
+                    db.insertOrThrow(AdminBD.NOMBRE_TABLA_CONTACTOS, null, values);
                 }
 
                 db.setTransactionSuccessful();
@@ -141,6 +128,7 @@ public class ViewContactosActivity extends AppCompatActivity {
             }
         }
     }
+
 
 
     private void obtenerContactosBD() {
@@ -162,7 +150,7 @@ public class ViewContactosActivity extends AppCompatActivity {
 
                     String hora = "12:00 PM"; // Hora por defecto
 
-                    contactosList.add(new Contactos(id, nombre, hora, R.drawable.perfil, telefono, correo,categoria));
+                    contactosList.add(new Contactos(id, nombre, hora, R.drawable.perfil, telefono, correo, categoria));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -174,7 +162,6 @@ public class ViewContactosActivity extends AppCompatActivity {
             db.close();
         }
 
-        // Configurar el adaptador con los datos de contactos
         if (contactsAdapter == null) {
             contactsAdapter = new AdaptadorContactos(contactosList, this);
             recyclerView.setAdapter(contactsAdapter);
@@ -182,13 +169,5 @@ public class ViewContactosActivity extends AppCompatActivity {
             contactsAdapter.notifyDataSetChanged();
         }
     }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Clear the list and reload contacts from the database to reflect any updates
-        contactosList.clear();
-        obtenerContactosBD();
-    }
 }
+
