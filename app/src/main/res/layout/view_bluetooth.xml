@@ -9,44 +9,42 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <SearchView
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:queryHint="Buscar contactos"
+        />
 
-        <TextView
-            android:id="@+id/nombre_contacto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nombre del Contacto"
-            android:textSize="18sp"
-            android:textColor="@android:color/black" />
+    <ListView
+        android:id="@+id/list_view_contactos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        android:cacheColorHint="@color/black"
+        android:outlineSpotShadowColor="@color/black"
+        android:outlineAmbientShadowColor="@color/black"
+        />
 
-        <TextView
-            android:id="@+id/numero_contacto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Número del Contacto"
-            android:textSize="15sp"
-            android:textColor="@android:color/black" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contactos seleccionados"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:padding="16dp" />
 
-        <TextView
-            android:id="@+id/hora_contacto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hora de la llamada"
-            android:textSize="15sp"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/correo_contacto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Correo del Contacto"
-            android:textSize="15sp"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_seleccionados"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,37 +55,18 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seleccionar contacto"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
-            android:onClick="SeleccionarContacto" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
             android:text="Compartir"
-            android:textColor="@color/white"
             android:backgroundTint="@color/black"
-            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
             android:onClick="Compartir" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
             android:text="Regresar"
-            android:textColor="@color/white"
             android:backgroundTint="@color/black"
-            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
             android:onClick="Regresar" />
     </LinearLayout>
 </LinearLayout>
