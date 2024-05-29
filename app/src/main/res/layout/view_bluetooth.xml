@@ -14,6 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:queryHint="Buscar contactos"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
         />
 
     <ListView
@@ -24,9 +26,7 @@
         android:padding="8dp"
         android:clipToPadding="false"
         android:scrollbars="vertical"
-        android:cacheColorHint="@color/black"
-        android:outlineSpotShadowColor="@color/black"
-        android:outlineAmbientShadowColor="@color/black"
+        android:textColor="@color/black"
         />
 
     <TextView

@@ -1,0 +1,19 @@
+<!-- styles.xml -->
+<resources>
+
+    <!-- Custom SearchView Style -->
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@color/white</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorHint">@android:color/black</item>
+    </style>
+
+    <!-- Custom ListView Style -->
+    <style name="CustomListView" parent="Widget.AppCompat.ListView">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+</resources>
