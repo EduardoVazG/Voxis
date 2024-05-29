@@ -164,7 +164,7 @@ public class ViewContactosActivity extends AppCompatActivity {
         }
 
         if (contactsAdapter == null) {
-            contactsAdapter = new AdaptadorContactos(contactosList, this);
+            contactsAdapter = new AdaptadorContactos(contactosList, this, null);
             recyclerView.setAdapter(contactsAdapter);
         } else {
             contactsAdapter.notifyDataSetChanged();
