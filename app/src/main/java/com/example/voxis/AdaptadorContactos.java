@@ -19,10 +19,12 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
 
     private List<Contactos> contactosList;
     private Context context;
+    private OnContactSelectedListener onContactSelectedListener;
 
-    public AdaptadorContactos(List<Contactos> contactList, Context context) {
+    public AdaptadorContactos(List<Contactos> contactList, Context context, OnContactSelectedListener onContactSelectedListener) {
         this.contactosList = contactList != null ? contactList : new ArrayList<>();
         this.context = context;
+        this.onContactSelectedListener = onContactSelectedListener;
     }
 
     @NonNull
@@ -32,7 +34,6 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         return new ContactViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         Contactos contactos = contactosList.get(position);
@@ -41,18 +42,20 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         holder.perfil_icono.setImageResource(contactos.getProfileImage());
 
         holder.relativeLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(context, MostrarContactoActivity.class);
-            intent.putExtra("id", contactos.getId());
-            intent.putExtra("nombre", contactos.getName());
-            intent.putExtra("numero", contactos.getNumero_contacto());
-            intent.putExtra("correo", contactos.getCorreo());
-            intent.putExtra("categoria", contactos.getCategoria()); // Añadido
-            intent.putExtra("perfilResId", contactos.getProfileImage());
-            context.startActivity(intent);
+            if (onContactSelectedListener != null) {
+                onContactSelectedListener.onContactSelected(contactos);
+            } else {
+                Intent intent = new Intent(context, MostrarContactoActivity.class);
+                intent.putExtra("id", contactos.getId());
+                intent.putExtra("nombre", contactos.getName());
+                intent.putExtra("numero", contactos.getNumero_contacto());
+                intent.putExtra("correo", contactos.getCorreo());
+                intent.putExtra("categoria", contactos.getCategoria());
+                intent.putExtra("perfilResId", contactos.getProfileImage());
+                context.startActivity(intent);
+            }
         });
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -74,10 +77,13 @@ public class AdaptadorContactos extends RecyclerView.Adapter<AdaptadorContactos.
         }
     }
 
+    public interface OnContactSelectedListener {
+        void onContactSelected(Contactos contacto);
+    }
+
     public void updateContactList(List<Contactos> newContactList) {
         contactosList.clear();
         contactosList.addAll(newContactList);
         notifyDataSetChanged();
     }
 }
-
