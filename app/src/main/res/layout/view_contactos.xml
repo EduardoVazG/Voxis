@@ -6,7 +6,6 @@
     android:background="#FFFFFF"
     android:padding="16dp">
 
-<<<<<<< HEAD
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,12 +24,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:popupBackground="@color/white"
+            />
     </LinearLayout>
 
-=======
-    >
->>>>>>> 8840911cf2e5b3c19501ec4e9d16e34c672659c3
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"

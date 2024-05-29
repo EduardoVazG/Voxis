@@ -2,21 +2,12 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/view_bluetooth"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ViewBluetoothActivity"
     android:background="@color/white"
-    android:orientation="vertical">
-
-    <SearchView
-        android:id="@+id/search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:queryHint="Buscar contactos"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black"
-        />
+    >
 
     <ListView
         android:id="@+id/list_view_contactos"
@@ -25,9 +16,7 @@
         android:layout_weight="1"
         android:padding="8dp"
         android:clipToPadding="false"
-        android:scrollbars="vertical"
-        android:textColor="@color/black"
-        />
+        android:scrollbars="vertical" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,7 +24,9 @@
         android:text="Contactos seleccionados"
         android:textSize="18sp"
         android:textColor="@android:color/black"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:textStyle="bold"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_seleccionados"
@@ -50,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_marginTop="50dp">
+        android:layout_marginBottom="50dp">
 
         <Button
             android:layout_width="wrap_content"

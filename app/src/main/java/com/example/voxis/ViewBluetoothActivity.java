@@ -3,8 +3,10 @@ package com.example.voxis;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,13 +19,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewBluetoothActivity extends AppCompatActivity {
 
-    private SearchView searchView;
     private ListView listViewContactos;
     private RecyclerView recyclerViewSeleccionados;
     private AdaptadorContactos selectedContactsAdapter;
@@ -38,7 +38,6 @@ public class ViewBluetoothActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_bluetooth);
 
-        searchView = findViewById(R.id.search_view);
         listViewContactos = findViewById(R.id.list_view_contactos);
         recyclerViewSeleccionados = findViewById(R.id.recycler_view_seleccionados);
 
@@ -67,6 +66,17 @@ public class ViewBluetoothActivity extends AppCompatActivity {
             }
         });
 
+        obtenerContactosBD();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_3, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -80,7 +90,7 @@ public class ViewBluetoothActivity extends AppCompatActivity {
             }
         });
 
-        obtenerContactosBD();
+        return true;
     }
 
     private void filterContactos(String query) {
