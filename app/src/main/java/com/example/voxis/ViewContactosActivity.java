@@ -1,7 +1,10 @@
 package com.example.voxis;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -9,9 +12,15 @@ import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,8 +32,9 @@ public class ViewContactosActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdaptadorContactos contactsAdapter;
     private List<Contactos> contactosList;
+    private Spinner filtrarCategorias;
+    private List<String> categoriasList;
 
-    private static final int REQUEST_CODE_EDIT_CONTACT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +44,14 @@ public class ViewContactosActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         contactosList = new ArrayList<>();
+        categoriasList = new ArrayList<>();
+        filtrarCategorias = findViewById(R.id.filtro_categoria);
 
-        obtenerContactosBD();
+        cargarCategorias();
+        configurarSpinner();
+
+        obtenerContactosBD("Todos");
+
     }
 
     @Override
@@ -55,22 +71,77 @@ public class ViewContactosActivity extends AppCompatActivity {
             Intent intent = new Intent(ViewContactosActivity.this, ViewAcercaDeActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.bluetooth) {
+        }else if (id == R.id.bluetooth) {
             Intent intent = new Intent(ViewContactosActivity.this, ViewBluetoothActivity.class);
             startActivity(intent);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void obtenerContactosBD() {
+
+
+    private void cargarCategorias() {
         AdminBD adminBD = new AdminBD(this);
         SQLiteDatabase db = adminBD.getReadableDatabase();
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery("SELECT contactos.id, contactos.nombre, contactos.telefono, contactos.correo, categorias.nombre AS categoria FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS +
-                    " INNER JOIN " + AdminBD.NOMBRE_TABLA_CATEGORIAS + " ON " + AdminBD.NOMBRE_TABLA_CONTACTOS + "." + AdminBD.CONTACTOS_CAMPO5 + " = " + AdminBD.NOMBRE_TABLA_CATEGORIAS + "." + AdminBD.CATEGORIAS_CAMPO1, null);
+            cursor = db.rawQuery("SELECT " + AdminBD.CATEGORIAS_CAMPO2 + " FROM " + AdminBD.NOMBRE_TABLA_CATEGORIAS, null);
+            categoriasList.add("Todos");
+
+            if (cursor.moveToFirst()) {
+                do {
+                    categoriasList.add(cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CATEGORIAS_CAMPO2)));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al cargar categorías", Toast.LENGTH_SHORT).show();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+    }
+
+    private void configurarSpinner() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriasList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filtrarCategorias.setAdapter(adapter);
+
+        filtrarCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String categoriaSeleccionada = categoriasList.get(position);
+                obtenerContactosBD(categoriaSeleccionada);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No hacer nada
+            }
+        });
+    }
+
+    private void obtenerContactosBD(String categoria) {
+        AdminBD adminBD = new AdminBD(this);
+        SQLiteDatabase db = adminBD.getReadableDatabase();
+        Cursor cursor = null;
+        contactosList.clear();
+
+        try {
+            String query;
+            if (categoria.equals("Todos")) {
+                query = "SELECT contactos.id, contactos.nombre, contactos.telefono, contactos.correo, categorias.nombre AS categoria FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS +
+                        " INNER JOIN " + AdminBD.NOMBRE_TABLA_CATEGORIAS + " ON " + AdminBD.NOMBRE_TABLA_CONTACTOS + "." + AdminBD.CONTACTOS_CAMPO5 + " = " + AdminBD.NOMBRE_TABLA_CATEGORIAS + "." + AdminBD.CATEGORIAS_CAMPO1;
+            } else {
+                query = "SELECT contactos.id, contactos.nombre, contactos.telefono, contactos.correo, categorias.nombre AS categoria FROM " + AdminBD.NOMBRE_TABLA_CONTACTOS +
+                        " INNER JOIN " + AdminBD.NOMBRE_TABLA_CATEGORIAS + " ON " + AdminBD.NOMBRE_TABLA_CONTACTOS + "." + AdminBD.CONTACTOS_CAMPO5 + " = " + AdminBD.NOMBRE_TABLA_CATEGORIAS + "." + AdminBD.CATEGORIAS_CAMPO1 +
+                        " WHERE categorias.nombre = ?";
+            }
+            cursor = db.rawQuery(query, categoria.equals("Todos") ? null : new String[]{categoria});
 
             if (cursor.moveToFirst()) {
                 do {
@@ -78,11 +149,9 @@ public class ViewContactosActivity extends AppCompatActivity {
                     String nombre = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO2));
                     String telefono = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO3));
                     String correo = cursor.getString(cursor.getColumnIndexOrThrow(AdminBD.CONTACTOS_CAMPO4));
-                    String categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
+                    String categoriaNombre = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
 
-                    String hora = "12:00 PM"; // Hora por defecto
-
-                    contactosList.add(new Contactos(id, nombre, hora, R.drawable.perfil, telefono, correo, categoria));
+                    contactosList.add(new Contactos(id, nombre, "12:00 PM", R.drawable.perfil, telefono, correo, categoriaNombre));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
