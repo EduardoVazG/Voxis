@@ -18,6 +18,8 @@
         />
 
     <item
+        android:popupBackground="@color/white"
+        android:iconTint="@color/white"
         android:id="@+id/acerdaDe"
         android:title="Acerca de"
         android:icon="@drawable/opciones"

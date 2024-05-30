@@ -1,6 +1,8 @@
 package com.example.voxis;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -77,6 +79,31 @@ public class AdminBD extends SQLiteOpenHelper {
         Log.d("AdminBD", "Base de datos y tablas creadas");
     }
 
+    public void agregarContacto(Contactos contacto) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CONTACTOS_CAMPO2, contacto.getName());
+        values.put(CONTACTOS_CAMPO3, contacto.getNumero_contacto());
+        values.put(CONTACTOS_CAMPO4, contacto.getCorreo());
+        values.put(CONTACTOS_CAMPO5, obtenerCategoriaId(contacto.getCategoria()));
+
+        db.insert(NOMBRE_TABLA_CONTACTOS, null, values);
+        db.close();
+    }
+
+    private int obtenerCategoriaId(String categoriaNombre) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + CATEGORIAS_CAMPO1 + " FROM " + NOMBRE_TABLA_CATEGORIAS + " WHERE " + CATEGORIAS_CAMPO2 + " = ?", new String[]{categoriaNombre});
+        int categoriaId = -1;
+        if (cursor.moveToFirst()) {
+            categoriaId = cursor.getInt(cursor.getColumnIndexOrThrow(CATEGORIAS_CAMPO1));
+        }
+        cursor.close();
+        db.close();
+        return categoriaId;
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         String queryBorrarTablaRegistro = "DROP TABLE IF EXISTS " + NOMBRE_TABLA;
@@ -90,4 +117,6 @@ public class AdminBD extends SQLiteOpenHelper {
 
         onCreate(sqLiteDatabase);
     }
+
+
 }

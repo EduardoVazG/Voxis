@@ -20,32 +20,19 @@ public class Contactos {
         this.categoria = categoria;
     }
 
-    // Getters
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCallTime() {
-        return callTime;
-    }
-
-    public int getProfileImage() {
-        return profileImage;
-    }
-
-    public String getNumero_contacto() {
-        return numero_contacto;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getCallTime() { return callTime; }
+    public void setCallTime(String callTime) { this.callTime = callTime; }
+    public int getProfileImage() { return profileImage; }
+    public void setProfileImage(int profileImage) { this.profileImage = profileImage; }
+    public String getNumero_contacto() { return numero_contacto; }
+    public void setNumero_contacto(String numero_contacto) { this.numero_contacto = numero_contacto; }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }

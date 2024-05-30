@@ -1,28 +1,41 @@
 package com.example.voxis;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewBluetoothActivity extends AppCompatActivity {
+
+    private static final int REQUEST_PERMISSIONS = 100;
 
     private ListView listViewContactos;
     private RecyclerView recyclerViewSeleccionados;
@@ -53,26 +66,62 @@ public class ViewBluetoothActivity extends AppCompatActivity {
         listViewAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, contactosNamesList);
         listViewContactos.setAdapter(listViewAdapter);
 
-        listViewContactos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Contactos selectedContact = filteredContactosList.get(position);
-                if (!selectedContactosList.contains(selectedContact)) {
-                    selectedContactosList.add(selectedContact);
-                    selectedContactsAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(ViewBluetoothActivity.this, "El contacto ya está seleccionado", Toast.LENGTH_SHORT).show();
-                }
+        listViewContactos.setOnItemClickListener((parent, view, position, id) -> {
+            Contactos selectedContact = filteredContactosList.get(position);
+            if (!selectedContactosList.contains(selectedContact)) {
+                selectedContactosList.add(selectedContact);
+                selectedContactsAdapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(ViewBluetoothActivity.this, "El contacto ya está seleccionado", Toast.LENGTH_SHORT).show();
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!checkPermissions()) {
+                requestPermissions();
+            }
+        }
 
         obtenerContactosBD();
     }
 
+    private boolean checkPermissions() {
+        int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED &&
+                permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_PERMISSIONS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0) {
+                boolean allPermissionsGranted = true;
+                for (int result : grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        allPermissionsGranted = false;
+                        break;
+                    }
+                }
+                if (allPermissionsGranted) {
+                    Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Se necesitan todos los permisos para que la app funcione correctamente", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_3, menu);
+        getMenuInflater().inflate(R.menu.menu_3, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -143,15 +192,39 @@ public class ViewBluetoothActivity extends AppCompatActivity {
     }
 
     public void Compartir(View view) {
-        // Implementar funcionalidad de compartir
+        if (selectedContactosList.isEmpty()) {
+            Toast.makeText(this, "No hay contactos seleccionados para compartir", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Gson gson = new Gson();
+        String contactosJson = gson.toJson(selectedContactosList);
+
+        try {
+            File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "contactos.json");
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(contactosJson.getBytes());
+            fos.close();
+
+            Uri uri = FileProvider.getUriForFile(this, "com.example.voxis.provider", file);  // Cambia esto a tu nombre de paquete
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            sendIntent.setType("application/json");
+
+            // Restrict to Bluetooth only
+            sendIntent.setPackage("com.android.bluetooth");
+
+            startActivity(Intent.createChooser(sendIntent, "Compartir contactos via Bluetooth"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al crear el archivo JSON", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void Regresar(View view) {
         Intent intent = new Intent(ViewBluetoothActivity.this, ViewContactosActivity.class);
         startActivity(intent);
-    }
-
-    public void SeleccionarContacto(View view) {
-        // Implementar la función de seleccionar un contacto
     }
 }

@@ -109,7 +109,9 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textColorHint="@color/grisoscuro"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:popupBackground="@color/white"
+            />
 
     </LinearLayout>
 
